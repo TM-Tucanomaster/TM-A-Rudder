@@ -1,1 +1,30 @@
+#include <Wire.h>
+#include <AS5600.h>
+
+AS5600 as5600;  // Object for the AS5600 sensor
+
+void setup() {
+  Serial.begin(9600);  // Initializes serial communication for debugging
+  Wire.begin();        // Initializes I2C communication
+  as5600.begin();      // Initializes the AS5600 sensor
+}
+
+void loop() {
+  // Reads the value from the AS5600 sensor
+  int as5600Value = as5600.readAngle();  // Reads the angle from the AS5600 sensor in degrees
+
+  // Reads the Hall sensor values
+  int hallLeft = analogRead(A0);  // Reads the left Hall sensor (left brake) value on port A0
+  int hallRight = analogRead(A1); // Reads the right Hall sensor (right brake) value on port A1
+
+  // Prints the sensor values
+  Serial.print("AS5600 Value: ");
+  Serial.println(as5600Value);
+  Serial.print("Left Brake (A0): ");
+  Serial.println(hallLeft);
+  Serial.print("Right Brake (A1): ");
+  Serial.println(hallRight);
+
+  delay(500);  // Delay for easier reading in the serial monitor
+}
 
