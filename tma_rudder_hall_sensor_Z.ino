@@ -1,47 +1,69 @@
 #include <Joystick.h>
 
-// Joystick object definition
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
-                   JOYSTICK_TYPE_MULTI_AXIS, 3, 2,  // 3 axes (X, Y, Z)
-                   true, true, true, false, false, false,
-                   true, false, false, false, false); // 'true' for Z rotation
+// Defining Hall sensor pins
+const int rudderPin = A0;    // Pin for the rudder Hall sensor
+const int leftBrakePin = A1; // Pin for the left brake Hall sensor
+const int rightBrakePin = A2; // Pin for the right brake Hall sensor
 
-const int button1Pin = 4;    // Pin for button 1 (e.g., digital pin 4)
-const int button2Pin = 5;    // Pin for button 2 (e.g., digital pin 5)
-const int hallSensor1Pin = A1;  // Pin for Hall sensor 1 (analog pin A1)
-const int hallSensor2Pin = A2;  // Pin for Hall sensor 2 (analog pin A2)
-const int hallSensor3Pin = A0;  // Pin for Hall sensor 3 (analog pin A0) - Z axis
+// Rudder limits (values read by the Hall sensor)
+const int rudderMin = 150; // Minimum rudder value
+const int rudderMax = 850; // Maximum rudder value
+
+// Brake limits (values read by the Hall sensor)
+const int leftBrakeMin = 200; // Minimum left brake value
+const int leftBrakeMax = 900; // Maximum left brake value
+const int rightBrakeMin = 200; // Minimum right brake value
+const int rightBrakeMax = 900; // Maximum right brake value
+
+// Creating a Joystick object with X and Y enabled but fixed at the center
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK, 
+                   0, 0,  // No buttons and hat switches
+                   true,  // X-axis enabled (but fixed at center)
+                   true,  // Y-axis enabled (also fixed at center)
+                   false, // Z-axis disabled
+                   true,  // Rx enabled (Left Brake)
+                   true,  // Ry enabled (Right Brake)
+                   true,  // Rz enabled (Rudder)
+                   false, false, false); // No rudder, throttle, or extra accelerators
 
 void setup() {
-  pinMode(button1Pin, INPUT_PULLUP);  // Configure the pin for button 1
-  pinMode(button2Pin, INPUT_PULLUP);  // Configure the pin for button 2
-  
-  Joystick.begin();          // Initialize the Joystick library
+  // Initialize the Joystick
+  Joystick.begin();
+
+  // Configure the Joystick axes
+  Joystick.setXAxisRange(0, 1023);  // X enabled but fixed at 512 (center)
+  Joystick.setYAxisRange(0, 1023);  // Y enabled but fixed at 512 (center)
+  Joystick.setRxAxisRange(0, 1023); // Rx (Left Brake)
+  Joystick.setRyAxisRange(0, 1023); // Ry (Right Brake)
+  Joystick.setRzAxisRange(0, 1023); // Rz (Rudder)
 }
 
 void loop() {
-  // Read values from the Hall sensors
-  int hallValue1 = analogRead(hallSensor1Pin);  // Hall sensor 1 (A1)
-  int hallValue2 = analogRead(hallSensor2Pin);  // Hall sensor 2 (A2)
-  int hallValue3 = analogRead(hallSensor3Pin);  // Hall sensor 3 (A0) - Z axis
+  // Read values from Hall sensors
+  int rudderValue = analogRead(rudderPin);
+  int leftBrakeValue = analogRead(leftBrakePin);
+  int rightBrakeValue = analogRead(rightBrakePin);
 
-  // Map Hall sensor values to joystick range
-  int mappedHallValueX = map(hallValue1, 810, 536, 0, 1023);  // For X-axis
-  int mappedHallValueY = map(hallValue2, 643, 540, 0, 1023);  // For Y-axis
-  int mappedHallValueZ = map(hallValue3, 209, 828, 0, 1023);  // For Z-axis
+  // Map values to the 0-1023 range
+  rudderValue = map(rudderValue, rudderMin, rudderMax, 0, 1023);
+  leftBrakeValue = map(leftBrakeValue, leftBrakeMin, leftBrakeMax, 0, 1023);
+  rightBrakeValue = map(rightBrakeValue, rightBrakeMin, rightBrakeMax, 0, 1023);
 
-  // Set the mapped Hall values
-  Joystick.setXAxis(mappedHallValueX); // X-axis
-  Joystick.setYAxis(mappedHallValueY); // Y-axis
-  Joystick.setZAxis(mappedHallValueZ); // Z-axis
+  // Ensure values stay within the 0-1023 range
+  rudderValue = constrain(rudderValue, 0, 1023);
+  leftBrakeValue = constrain(leftBrakeValue, 0, 1023);
+  rightBrakeValue = constrain(rightBrakeValue, 0, 1023);
 
-  // Read the state of the buttons and update them on the joystick
-  int buttonState1 = !digitalRead(button1Pin);  // Invert the value due to pull-up
-  int buttonState2 = !digitalRead(button2Pin);  // Invert the value due to pull-up
-  
-  Joystick.setButton(0, buttonState1);  // Set the state of button 1
-  Joystick.setButton(1, buttonState2);  // Set the state of button 2
-  
-  delay(10);  // Small delay to avoid excessive readings
+  // Keep X and Y axes always centered at 512
+  Joystick.setXAxis(512);
+  Joystick.setYAxis(512);
+
+  // Send mapped values to the Joystick axes
+  Joystick.setRzAxis(rudderValue);
+  Joystick.setRxAxis(leftBrakeValue);
+  Joystick.setRyAxis(rightBrakeValue);
+
+  // Small delay for stability
+  delay(10);
 }
 
