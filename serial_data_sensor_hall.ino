@@ -4,17 +4,17 @@ void setup() {
 
 void loop() {
   // Read the values from the Hall sensors
-  int hallValue1 = analogRead(A0);  // Read the value from the Hall sensor on pin A0
-  int hallValue2 = analogRead(A1);  // Read the value from the Hall sensor on pin A1
-  int hallValue3 = analogRead(A2);  // Read the value from the Hall sensor on pin A2
+  int rudderValue = analogRead(A0);  // Read the value from the rudder Hall sensor
+  int leftBrakeValue = analogRead(A1);  // Read the value from the left brake Hall sensor
+  int rightBrakeValue = analogRead(A2);  // Read the value from the right brake Hall sensor
 
   // Print the values from the Hall sensors
-  Serial.print("Hall 1 Value: ");
-  Serial.println(hallValue1);
-  Serial.print("Hall 2 Value: ");
-  Serial.println(hallValue2);
-  Serial.print("Hall 3 Value: ");
-  Serial.println(hallValue3);
+  Serial.print("Rudder Value: ");
+  Serial.println(rudderValue);
+  Serial.print("Left Brake Value: ");
+  Serial.println(leftBrakeValue);
+  Serial.print("Right Brake Value: ");
+  Serial.println(rightBrakeValue);
 
   delay(500);  // Delay to make it easier to read in the Serial Monitor
 }
