@@ -6,14 +6,14 @@ const int leftBrakePin = A1; // Pin for the left brake Hall sensor
 const int rightBrakePin = A2; // Pin for the right brake Hall sensor
 
 // Rudder limits (values read by the Hall sensor)
-const int rudderMin = 150; // Minimum rudder value
-const int rudderMax = 850; // Maximum rudder value
+const int rudderMin = 152; // Minimum rudder value
+const int rudderMax = 859; // Maximum rudder value
 
 // Brake limits (values read by the Hall sensor)
-const int leftBrakeMin = 200; // Minimum left brake value
-const int leftBrakeMax = 900; // Maximum left brake value
-const int rightBrakeMin = 200; // Minimum right brake value
-const int rightBrakeMax = 900; // Maximum right brake value
+const int leftBrakeMin = 783; // Minimum left brake value
+const int leftBrakeMax = 564; // Maximum left brake value
+const int rightBrakeMin = 641; // Minimum right brake value
+const int rightBrakeMax = 534; // Maximum right brake value
 
 // Creating a Joystick object with X and Y enabled but fixed at the center
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_JOYSTICK, 
